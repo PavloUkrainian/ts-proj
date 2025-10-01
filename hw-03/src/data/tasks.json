@@ -1,0 +1,146 @@
+[
+  {
+    "id": 1,
+    "title": "Buy groceries",
+    "description": "Milk, eggs, bread",
+    "createdAt": "2025-10-10T09:00:00.000Z",
+    "status": "todo",
+    "priority": "medium",
+    "deadline": "2025-10-20T18:00:00.000Z",
+    "type": "task"
+  },
+  {
+    "id": 2,
+    "title": "Write report",
+    "description": "Q3 summary",
+    "createdAt": "2025-10-11T10:15:00.000Z",
+    "status": "in_progress",
+    "priority": "high",
+    "deadline": "2025-10-19T20:00:00.000Z",
+    "type": "task"
+  },
+  {
+    "id": 3,
+    "title": "Gym session",
+    "description": "Leg day",
+    "createdAt": "2025-10-12T07:30:00.000Z",
+    "status": "todo",
+    "priority": "low",
+    "deadline": "2025-10-22T07:00:00.000Z",
+    "type": "task"
+  },
+  {
+    "id": 4,
+    "title": "Team meeting",
+    "description": "Sprint planning",
+    "createdAt": "2025-10-12T12:00:00.000Z",
+    "status": "done",
+    "priority": "medium",
+    "deadline": "2025-10-13T09:00:00.000Z",
+    "type": "task"
+  },
+  {
+    "id": 5,
+    "title": "Read book",
+    "description": "Clean Architecture",
+    "createdAt": "2025-10-13T19:00:00.000Z",
+    "status": "todo",
+    "priority": "low",
+    "deadline": "2025-11-01T21:00:00.000Z",
+    "type": "task"
+  },
+  {
+    "id": 6,
+    "title": "Pay bills",
+    "description": "Utilities",
+    "createdAt": "2025-10-14T08:45:00.000Z",
+    "status": "todo",
+    "priority": "medium",
+    "deadline": "2025-10-25T23:59:59.000Z",
+    "type": "task"
+  },
+  {
+    "id": 7,
+    "title": "Doctor appointment",
+    "description": "Dentist",
+    "createdAt": "2025-10-14T15:20:00.000Z",
+    "status": "in_progress",
+    "priority": "medium",
+    "deadline": "2025-10-21T10:00:00.000Z",
+    "type": "task"
+  },
+  {
+    "id": 8,
+    "title": "Refactor module",
+    "description": "Auth service cleanup",
+    "createdAt": "2025-10-15T11:00:00.000Z",
+    "status": "todo",
+    "priority": "high",
+    "deadline": "2025-10-23T18:00:00.000Z",
+    "type": "task"
+  },
+  {
+    "id": 9,
+    "title": "Plan trip",
+    "description": "Weekend route",
+    "createdAt": "2025-10-16T13:00:00.000Z",
+    "status": "todo",
+    "priority": "medium",
+    "deadline": "2025-10-30T12:00:00.000Z",
+    "type": "task"
+  },
+  {
+    "id": 10,
+    "title": "Clean apartment",
+    "description": "Kitchen + living room",
+    "createdAt": "2025-10-17T09:30:00.000Z",
+    "status": "done",
+    "priority": "low",
+    "deadline": "2025-10-18T20:00:00.000Z",
+    "type": "task"
+  },
+  {
+    "id": 12,
+    "title": "Fix login button",
+    "description": "Login button not working",
+    "createdAt": "2025-11-05T09:18:57.440Z",
+    "status": "todo",
+    "priority": "high",
+    "type": "bug",
+    "assignee": "John Doe"
+  },
+  {
+    "id": 13,
+    "title": "Implement user authentication",
+    "description": "Add login and registration",
+    "createdAt": "2025-11-05T09:18:57.441Z",
+    "status": "todo",
+    "priority": "high",
+    "type": "story",
+    "storyPoints": 5
+  },
+  {
+    "id": 14,
+    "title": "User Management System",
+    "description": "Complete user management features",
+    "createdAt": "2025-11-05T09:18:57.441Z",
+    "status": "todo",
+    "priority": "medium",
+    "type": "epic",
+    "features": [
+      "Authentication",
+      "User Profile",
+      "Settings"
+    ]
+  },
+  {
+    "id": 15,
+    "title": "Add password validation",
+    "description": "Validate password strength",
+    "createdAt": "2025-11-05T09:18:57.441Z",
+    "status": "todo",
+    "priority": "medium",
+    "type": "subtask",
+    "parentId": 13
+  }
+]

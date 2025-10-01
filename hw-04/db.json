@@ -1,0 +1,40 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Buy groceries",
+      "description": "Milk, eggs, bread",
+      "createdAt": "2025-10-10T09:00:00.000Z",
+      "status": "todo",
+      "priority": "medium",
+      "deadline": "2025-10-20"
+    },
+    {
+      "id": "2",
+      "title": "Write report",
+      "description": "Q3 summary",
+      "createdAt": "2025-10-11T10:15:00.000Z",
+      "status": "in_progress",
+      "priority": "high",
+      "deadline": "2025-10-19"
+    },
+    {
+      "id": "3",
+      "title": "Gym session",
+      "description": "Leg day",
+      "createdAt": "2025-10-12T07:30:00.000Z",
+      "status": "todo",
+      "priority": "low",
+      "deadline": "2025-10-22"
+    },
+    {
+      "title": "test_1 ",
+      "description": "test_1 ",
+      "status": "todo",
+      "priority": "low",
+      "deadline": "2025-11-29",
+      "createdAt": "2025-11-10T10:27:40.947Z",
+      "id": "9jVguSX"
+    }
+  ]
+}

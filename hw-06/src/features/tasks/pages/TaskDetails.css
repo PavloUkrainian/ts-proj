@@ -1,0 +1,136 @@
+.task-details-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.back-btn {
+  background-color: #3a3a3a;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.25s;
+  margin-bottom: 2rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.back-btn:hover {
+  background-color: #4a4a4a;
+}
+
+.task-details {
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid #3a3a3a;
+}
+
+.task-details h1 {
+  font-size: 2.5em;
+  line-height: 1.1;
+  margin: 0 0 2rem 0;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.task-section {
+  margin-bottom: 1.5rem;
+}
+
+.task-section h2 {
+  font-size: 1.2em;
+  margin: 0 0 0.5rem 0;
+  color: rgba(255, 255, 255, 0.87);
+  font-weight: 500;
+}
+
+.task-section p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
+}
+
+.status,
+.priority {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 1em;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-todo {
+  background-color: #3a3a3a;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.status-in_progress {
+  background-color: #646cff;
+  color: white;
+}
+
+.status-done {
+  background-color: #4caf50;
+  color: white;
+}
+
+.priority-low {
+  background-color: #4caf50;
+  color: white;
+}
+
+.priority-medium {
+  background-color: #ff9800;
+  color: white;
+}
+
+.priority-high {
+  background-color: #f44336;
+  color: white;
+}
+
+.error-message {
+  background-color: #f44336;
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+@media (prefers-color-scheme: light) {
+  .task-details {
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+  }
+
+  .task-details h1 {
+    color: #213547;
+  }
+
+  .task-section h2 {
+    color: #213547;
+  }
+
+  .task-section p {
+    color: #666;
+  }
+
+  .back-btn {
+    background-color: #e0e0e0;
+    color: #213547;
+  }
+
+  .back-btn:hover {
+    background-color: #d0d0d0;
+  }
+
+  .status-todo {
+    background-color: #e0e0e0;
+    color: #213547;
+  }
+}

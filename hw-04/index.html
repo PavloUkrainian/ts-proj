@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Manager</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Task Manager</h1>
+      
+      <div class="container">
+        <div class="tasks-section">
+          <h2>Список завдань</h2>
+          <div id="tasks-list"></div>
+        </div>
+        
+        <div class="form-section">
+          <h2>Створити нове завдання</h2>
+          <form id="task-form">
+            <div class="form-group">
+              <label for="title">Назва:</label>
+              <input type="text" id="title" name="title" required />
+            </div>
+            
+            <div class="form-group">
+              <label for="description">Опис:</label>
+              <textarea id="description" name="description" rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="status">Статус:</label>
+              <select id="status" name="status" required>
+                <option value="todo">To Do</option>
+                <option value="in_progress">In Progress</option>
+                <option value="done">Done</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="priority">Пріоритет:</label>
+              <select id="priority" name="priority" required>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="deadline">Дедлайн:</label>
+              <input type="date" id="deadline" name="deadline" />
+            </div>
+            
+            <button type="submit">Створити завдання</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

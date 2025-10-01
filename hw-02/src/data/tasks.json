@@ -1,0 +1,92 @@
+[
+  {
+    "id": "1",
+    "title": "Buy groceries",
+    "createdAt": "2025-10-10T09:00:00.000Z",
+    "status": "todo",
+    "priority": "medium",
+    "description": "Milk, eggs, bread",
+    "deadline": "2025-10-20T18:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "title": "Write report",
+    "createdAt": "2025-10-11T10:15:00.000Z",
+    "status": "in_progress",
+    "priority": "high",
+    "description": "Q3 summary",
+    "deadline": "2025-10-19T20:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "title": "Gym session",
+    "createdAt": "2025-10-12T07:30:00.000Z",
+    "status": "todo",
+    "priority": "low",
+    "description": "Leg day",
+    "deadline": "2025-10-22T07:00:00.000Z"
+  },
+  {
+    "id": "4",
+    "title": "Team meeting",
+    "createdAt": "2025-10-12T12:00:00.000Z",
+    "status": "done",
+    "priority": "medium",
+    "description": "Sprint planning",
+    "deadline": "2025-10-13T09:00:00.000Z"
+  },
+  {
+    "id": "5",
+    "title": "Read book",
+    "createdAt": "2025-10-13T19:00:00.000Z",
+    "status": "todo",
+    "priority": "low",
+    "description": "Clean Architecture",
+    "deadline": "2025-11-01T21:00:00.000Z"
+  },
+  {
+    "id": "6",
+    "title": "Pay bills",
+    "createdAt": "2025-10-14T08:45:00.000Z",
+    "status": "todo",
+    "priority": "medium",
+    "description": "Utilities",
+    "deadline": "2025-10-25T23:59:59.000Z"
+  },
+  {
+    "id": "7",
+    "title": "Doctor appointment",
+    "createdAt": "2025-10-14T15:20:00.000Z",
+    "status": "in_progress",
+    "priority": "medium",
+    "description": "Dentist",
+    "deadline": "2025-10-21T10:00:00.000Z"
+  },
+  {
+    "id": "8",
+    "title": "Refactor module",
+    "createdAt": "2025-10-15T11:00:00.000Z",
+    "status": "todo",
+    "priority": "high",
+    "description": "Auth service cleanup",
+    "deadline": "2025-10-23T18:00:00.000Z"
+  },
+  {
+    "id": "9",
+    "title": "Plan trip",
+    "createdAt": "2025-10-16T13:00:00.000Z",
+    "status": "todo",
+    "priority": "medium",
+    "description": "Weekend route",
+    "deadline": "2025-10-30T12:00:00.000Z"
+  },
+  {
+    "id": "10",
+    "title": "Clean apartment",
+    "createdAt": "2025-10-17T09:30:00.000Z",
+    "status": "done",
+    "priority": "low",
+    "description": "Kitchen + living room",
+    "deadline": "2025-10-18T20:00:00.000Z"
+  }
+]
