@@ -1,12 +1,15 @@
 const API_BASE_URL = 'http://localhost:3000';
 
+export type TaskStatus = 'todo' | 'in_progress' | 'done';
+export type TaskPriority = 'low' | 'medium' | 'high';
+
 export interface Task {
-  id?: string;
+  id: string;
   title: string;
   description?: string;
-  createdAt?: string;
-  status: 'todo' | 'in_progress' | 'done';
-  priority: 'low' | 'medium' | 'high';
+  createdAt: string;
+  status: TaskStatus;
+  priority: TaskPriority;
   deadline?: string;
 }
 

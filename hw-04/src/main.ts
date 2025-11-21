@@ -1,10 +1,23 @@
 import './style.css';
 import { createTask, getAllTasks, deleteTask } from './taskApi';
-import type { Task } from './taskApi';
+import type { Task, TaskStatus, TaskPriority } from './taskApi';
+
+// Константи для маппінгу статусів та пріоритетів
+const STATUS_MAP: Record<TaskStatus, string> = {
+  todo: 'To Do',
+  in_progress: 'В процесі',
+  done: 'Виконано',
+};
+
+const PRIORITY_MAP: Record<TaskPriority, string> = {
+  low: 'Низький',
+  medium: 'Середній',
+  high: 'Високий',
+};
 
 // DOM elements
-let tasksListEl: HTMLDivElement | null = null;
-let taskFormEl: HTMLFormElement | null = null;
+let tasksListEl: HTMLDivElement;
+let taskFormEl: HTMLFormElement;
 
 /**
  * Форматування дати для відображення
@@ -22,36 +35,21 @@ function formatDate(dateString?: string): string {
 /**
  * Отримання назви статусу українською
  */
-function getStatusLabel(status: string): string {
-  const statusMap: Record<string, string> = {
-    todo: 'To Do',
-    in_progress: 'В процесі',
-    done: 'Виконано',
-  };
-  return statusMap[status] || status;
+function getStatusLabel(status: TaskStatus): string {
+  return STATUS_MAP[status] || status;
 }
 
 /**
  * Отримання назви пріоритету українською
  */
-function getPriorityLabel(priority: string): string {
-  const priorityMap: Record<string, string> = {
-    low: 'Низький',
-    medium: 'Середній',
-    high: 'Високий',
-  };
-  return priorityMap[priority] || priority;
+function getPriorityLabel(priority: TaskPriority): string {
+  return PRIORITY_MAP[priority] || priority;
 }
 
 /**
  * Відображення списку завдань
  */
 function renderTasks(tasks: Task[]): void {
-  if (!tasksListEl) {
-    console.error('Елемент #tasks-list не знайдено');
-    return;
-  }
-
   if (tasks.length === 0) {
     tasksListEl.innerHTML = '<p>Немає завдань</p>';
     return;
@@ -74,35 +72,12 @@ function renderTasks(tasks: Task[]): void {
   `
     )
     .join('');
-
-  // Додаємо обробники подій для кнопок видалення
-  tasksListEl.querySelectorAll('.delete-btn').forEach((btn) => {
-    btn.addEventListener('click', async (e) => {
-      const taskId = (e.target as HTMLButtonElement).dataset.id;
-      if (taskId) {
-        try {
-          console.log('Видалення завдання:', taskId);
-          await deleteTask(taskId);
-          console.log('Завдання видалено, оновлення списку...');
-          await loadAndRenderTasks();
-        } catch (error) {
-          console.error('Помилка видалення завдання:', error);
-          alert('Не вдалося видалити завдання. Переконайтеся, що json-server запущений.');
-        }
-      }
-    });
-  });
 }
 
 /**
  * Завантаження та відображення завдань
  */
 async function loadAndRenderTasks(): Promise<void> {
-  if (!tasksListEl) {
-    console.error('Елемент #tasks-list не знайдено');
-    return;
-  }
-
   try {
     console.log('Запит до API...');
     const tasks = await getAllTasks();
@@ -118,65 +93,71 @@ async function loadAndRenderTasks(): Promise<void> {
  * Обробка подання форми
  */
 function setupFormHandler(): void {
-  if (!taskFormEl) {
-    console.error('Елемент #task-form не знайдено');
-    return;
-  }
-
   taskFormEl.addEventListener('submit', async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const formData = new FormData(taskFormEl);
-  const title = formData.get('title') as string;
-  const description = formData.get('description') as string;
-  const status = formData.get('status') as 'todo' | 'in_progress' | 'done';
-  const priority = formData.get('priority') as 'low' | 'medium' | 'high';
-  const deadline = formData.get('deadline') as string;
+    const formData = new FormData(taskFormEl);
+    const data = Object.fromEntries(formData) as {
+      title: string;
+      description: string;
+      status: TaskStatus;
+      priority: TaskPriority;
+      deadline: string;
+    };
 
-  try {
-    console.log('Створення завдання...');
-    const newTask = await createTask({
-      title,
-      description: description || undefined,
-      status,
-      priority,
-      deadline: deadline || undefined,
-    });
-    console.log('Завдання створено:', newTask);
+    try {
+      console.log('Створення завдання...');
+      const newTask = await createTask({
+        title: data.title,
+        description: data.description || undefined,
+        status: data.status,
+        priority: data.priority,
+        deadline: data.deadline || undefined,
+      });
+      console.log('Завдання створено:', newTask);
 
-    // Очищаємо форму
-    taskFormEl.reset();
+      // Очищаємо форму
+      taskFormEl.reset();
 
-    // Оновлюємо список завдань
-    console.log('Оновлення списку завдань...');
-    await loadAndRenderTasks();
-  } catch (error) {
-    console.error('Помилка створення завдання:', error);
-    alert('Не вдалося створити завдання. Переконайтеся, що json-server запущений.');
-  }
+      // Оновлюємо список завдань
+      console.log('Оновлення списку завдань...');
+      await loadAndRenderTasks();
+    } catch (error) {
+      console.error('Помилка створення завдання:', error);
+      alert('Не вдалося створити завдання. Переконайтеся, що json-server запущений.');
+    }
   });
 }
 
 // Ініціалізація після завантаження DOM
 function init(): void {
   // Знаходимо елементи DOM
-  tasksListEl = document.querySelector<HTMLDivElement>('#tasks-list');
-  taskFormEl = document.querySelector<HTMLFormElement>('#task-form');
-
-  if (!tasksListEl) {
-    console.error('Елемент #tasks-list не знайдено в DOM');
-    return;
-  }
-
-  if (!taskFormEl) {
-    console.error('Елемент #task-form не знайдено в DOM');
-    return;
-  }
+  tasksListEl = document.querySelector<HTMLDivElement>('#tasks-list') as HTMLDivElement;
+  taskFormEl = document.querySelector<HTMLFormElement>('#task-form') as HTMLFormElement;
 
   console.log('Елементи DOM знайдено, ініціалізація...');
   
   // Налаштовуємо обробник форми
   setupFormHandler();
+  
+  // Налаштовуємо event delegation для кнопок видалення
+  tasksListEl.addEventListener('click', async (event) => {
+    const target = event.target as HTMLElement;
+    if (target.matches('.delete-btn')) {
+      const taskId = target.dataset.id;
+      if (taskId) {
+        try {
+          console.log('Видалення завдання:', taskId);
+          await deleteTask(taskId);
+          console.log('Завдання видалено, оновлення списку...');
+          await loadAndRenderTasks();
+        } catch (error) {
+          console.error('Помилка видалення завдання:', error);
+          alert('Не вдалося видалити завдання. Переконайтеся, що json-server запущений.');
+        }
+      }
+    }
+  });
   
   // Завантажуємо завдання
   loadAndRenderTasks();
