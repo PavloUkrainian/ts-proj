@@ -18,7 +18,7 @@ export function validateTaskInput(input: CreateTaskInput): void {
   }
 
   if (input.deadline) {
-    const deadline = input.deadline instanceof Date ? input.deadline : new Date(input.deadline);
+    const deadline = new Date(input.deadline);
     if (isNaN(deadline.getTime())) {
       throw new Error('Invalid deadline date');
     }
@@ -78,7 +78,7 @@ export function validateUpdateInput(input: UpdateTaskInput, existingTask: ITaskB
   }
 
   if (input.deadline) {
-    const deadline = input.deadline instanceof Date ? input.deadline : new Date(input.deadline);
+    const deadline = new Date(input.deadline);
     if (isNaN(deadline.getTime())) {
       throw new Error('Invalid deadline date');
     }
@@ -103,5 +103,3 @@ export function validateUpdateInput(input: UpdateTaskInput, existingTask: ITaskB
     }
   }
 }
-
-

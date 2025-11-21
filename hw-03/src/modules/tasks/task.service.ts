@@ -1,16 +1,20 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { Task, Subtask, Bug, Story, Epic } from './task.types';
-import type { ITaskBase, CreateTaskInput, UpdateTaskInput, FilterParams, Status, Priority } from './task.types';
+import { Task } from './models/Task.model';
+import { Subtask } from './models/Subtask.model';
+import { Bug } from './models/Bug.model';
+import { Story } from './models/Story.model';
+import { Epic } from './models/Epic.model';
+import type { ITaskBase, CreateTaskInput, UpdateTaskInput, FilterParams, TaskEntity } from './task.types';
 import { validateTaskInput, validateUpdateInput } from './task.validation';
 
 const DATA_PATH = path.resolve(process.cwd(), 'src/data/tasks.json');
 
 type RawTaskData = ITaskBase & {
-  parentId?: string | number;
+  parentId?: string;
   assignee?: string;
   storyPoints?: number;
-  epicId?: string | number;
+  epicId?: string;
   features?: string[];
 };
 
@@ -22,12 +26,12 @@ function readAllRaw(): RawTaskData[] {
   return JSON.parse(raw);
 }
 
-function writeAll(tasks: (Task | Subtask | Bug | Story | Epic)[]): void {
+function writeAll(tasks: TaskEntity[]): void {
   const raw = tasks.map(task => task.toJSON());
   fs.writeFileSync(DATA_PATH, JSON.stringify(raw, null, 2), 'utf-8');
 }
 
-function createTaskInstance(data: RawTaskData): Task | Subtask | Bug | Story | Epic {
+function createTaskInstance(data: RawTaskData): TaskEntity {
   const taskType = data.type || 'task';
   
   const taskData: ITaskBase = {
@@ -59,7 +63,7 @@ function createTaskInstance(data: RawTaskData): Task | Subtask | Bug | Story | E
 }
 
 export class TaskService {
-  private tasks: (Task | Subtask | Bug | Story | Epic)[] = [];
+  private tasks: TaskEntity[] = [];
 
   constructor() {
     this.loadTasks();
@@ -74,24 +78,24 @@ export class TaskService {
     writeAll(this.tasks);
   }
 
-  getAll(): (Task | Subtask | Bug | Story | Epic)[] {
+  getAll(): TaskEntity[] {
     return [...this.tasks];
   }
 
-  getById(id: string | number): Task | Subtask | Bug | Story | Epic | undefined {
-    return this.tasks.find(t => String(t.id) === String(id));
+  getById(id: string): TaskEntity | undefined {
+    return this.tasks.find(t => t.id === id);
   }
 
-  create(input: CreateTaskInput): Task | Subtask | Bug | Story | Epic {
+  create(input: CreateTaskInput): TaskEntity {
     validateTaskInput(input);
 
     const tasks = this.getAll();
     const last = tasks.length > 0 ? tasks[tasks.length - 1] : undefined;
 
-    let autoId: string | number = 1;
+    let autoId: string = '1';
     if (last) {
-      const n = Number(last.id);
-      autoId = Number.isFinite(n) ? n + 1 : String(tasks.length + 1);
+      const n = Number.parseInt(last.id, 10);
+      autoId = Number.isFinite(n) ? String(n + 1) : String(tasks.length + 1);
     }
 
     const taskType = input.type || 'task';
@@ -104,11 +108,11 @@ export class TaskService {
       createdAt: now,
       status: input.status || 'todo',
       priority: input.priority || 'medium',
-      deadline: input.deadline ? (typeof input.deadline === 'string' ? input.deadline : input.deadline.toISOString()) : undefined,
+      deadline: input.deadline || undefined,
       type: taskType,
     };
 
-    let newTask: Task | Subtask | Bug | Story | Epic;
+    let newTask: TaskEntity;
 
     switch (taskType) {
       case 'subtask':
@@ -135,8 +139,8 @@ export class TaskService {
     return newTask;
   }
 
-  update(id: string | number, input: UpdateTaskInput): Task | Subtask | Bug | Story | Epic {
-    const index = this.tasks.findIndex(t => String(t.id) === String(id));
+  update(id: string, input: UpdateTaskInput): TaskEntity {
+    const index = this.tasks.findIndex(t => t.id === id);
     if (index === -1) {
       throw new Error('Task not found');
     }
@@ -150,29 +154,27 @@ export class TaskService {
     if (input.status !== undefined) updatedData.status = input.status;
     if (input.priority !== undefined) updatedData.priority = input.priority;
     if (input.deadline !== undefined) {
-      updatedData.deadline = typeof input.deadline === 'string' 
-        ? input.deadline 
-        : input.deadline.toISOString();
+      updatedData.deadline = input.deadline;
     }
 
     existingTask.update(updatedData);
 
-    if (input.assignee !== undefined && existingTask instanceof Bug) {
-      existingTask.setAssignee(input.assignee);
+    if (input.assignee !== undefined && existingTask.type === 'bug') {
+      (existingTask as Bug).setAssignee(input.assignee);
     }
-    if (input.storyPoints !== undefined && existingTask instanceof Story) {
-      existingTask.setStoryPoints(input.storyPoints);
+    if (input.storyPoints !== undefined && existingTask.type === 'story') {
+      (existingTask as Story).setStoryPoints(input.storyPoints);
     }
-    if (input.features !== undefined && existingTask instanceof Epic) {
-      existingTask.setFeatures(input.features);
+    if (input.features !== undefined && existingTask.type === 'epic') {
+      (existingTask as Epic).setFeatures(input.features);
     }
 
     this.saveTasks();
     return existingTask;
   }
 
-  delete(id: string | number): void {
-    const index = this.tasks.findIndex(t => String(t.id) === String(id));
+  delete(id: string): void {
+    const index = this.tasks.findIndex(t => t.id === id);
     if (index === -1) {
       throw new Error('Task not found');
     }
@@ -180,7 +182,7 @@ export class TaskService {
     this.saveTasks();
   }
 
-  filter(params: FilterParams): (Task | Subtask | Bug | Story | Epic)[] {
+  filter(params: FilterParams): TaskEntity[] {
     return this.tasks.filter(task => {
       if (params.status && task.status !== params.status) return false;
       if (params.priority && task.priority !== params.priority) return false;
@@ -188,11 +190,11 @@ export class TaskService {
       
       const created = new Date(task.createdAt);
       if (params.createdFrom) {
-        const from = params.createdFrom instanceof Date ? params.createdFrom : new Date(params.createdFrom);
+        const from = new Date(params.createdFrom);
         if (created < from) return false;
       }
       if (params.createdTo) {
-        const to = params.createdTo instanceof Date ? params.createdTo : new Date(params.createdTo);
+        const to = new Date(params.createdTo);
         if (created > to) return false;
       }
       
@@ -200,12 +202,10 @@ export class TaskService {
     });
   }
 
-  isCompletedBeforeDeadline(task: Task | Subtask | Bug | Story | Epic, completedAt: string | Date = new Date()): boolean {
+  isCompletedBeforeDeadline(task: TaskEntity, completedAt: string = new Date().toISOString()): boolean {
     if (!task.deadline) return true;
     const deadline = new Date(task.deadline);
-    const completed = completedAt instanceof Date ? completedAt : new Date(completedAt);
+    const completed = new Date(completedAt);
     return completed <= deadline;
   }
 }
-
-

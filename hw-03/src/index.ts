@@ -4,7 +4,7 @@ const controller = new TaskController();
 
 console.log('ALL:', controller.getAll());
 
-console.log('GET 2:', controller.getById(2));
+console.log('GET 2:', controller.getById('2'));
 
 const created = controller.create({
   title: 'New minimal task',

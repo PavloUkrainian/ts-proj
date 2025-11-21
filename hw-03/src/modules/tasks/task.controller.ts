@@ -1,6 +1,5 @@
 import { TaskService } from './task.service';
-import type { CreateTaskInput, UpdateTaskInput, FilterParams } from './task.types';
-import type { Task, Subtask, Bug, Story, Epic } from './task.types';
+import type { CreateTaskInput, UpdateTaskInput, FilterParams, TaskEntity } from './task.types';
 
 export class TaskController {
   private taskService: TaskService;
@@ -9,40 +8,38 @@ export class TaskController {
     this.taskService = taskService || new TaskService();
   }
 
-  getAll(): (Task | Subtask | Bug | Story | Epic)[] {
+  getAll(): TaskEntity[] {
     return this.taskService.getAll();
   }
 
-  getById(id: string | number): Task | Subtask | Bug | Story | Epic | undefined {
+  getById(id: string): TaskEntity | undefined {
     return this.taskService.getById(id);
   }
 
-  create(input: CreateTaskInput): Task | Subtask | Bug | Story | Epic {
+  create(input: CreateTaskInput): TaskEntity {
     return this.taskService.create(input);
   }
 
-  update(id: string | number, input: UpdateTaskInput): Task | Subtask | Bug | Story | Epic {
+  update(id: string, input: UpdateTaskInput): TaskEntity {
     return this.taskService.update(id, input);
   }
 
-  delete(id: string | number): void {
+  delete(id: string): void {
     this.taskService.delete(id);
   }
 
-  filter(params: FilterParams): (Task | Subtask | Bug | Story | Epic)[] {
+  filter(params: FilterParams): TaskEntity[] {
     return this.taskService.filter(params);
   }
 
   isCompletedBeforeDeadline(
-    task: Task | Subtask | Bug | Story | Epic,
-    completedAt?: string | Date
+    task: TaskEntity,
+    completedAt?: string
   ): boolean {
     return this.taskService.isCompletedBeforeDeadline(task, completedAt);
   }
 
-  getTaskInfo(task: Task | Subtask | Bug | Story | Epic): string {
+  getTaskInfo(task: TaskEntity): string {
     return task.getTaskInfo();
   }
 }
-
-

@@ -89,3 +89,5 @@ Task.init(
 Task.belongsTo(User, { foreignKey: 'userId', as: 'assignee' });
 User.hasMany(Task, { foreignKey: 'userId', as: 'tasks' });
 
+
+
