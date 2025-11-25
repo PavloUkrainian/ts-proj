@@ -3,15 +3,24 @@ import { Task as TaskModel } from '../models/Task.model.js';
 import { Op, type WhereOptions } from 'sequelize';
 
 const convertToTask = (taskModel: TaskModel): Task => {
+  const plain = taskModel.toJSON();
   return {
-    id: String(taskModel.id),
-    title: taskModel.title,
-    description: taskModel.description || undefined,
-    createdAt: taskModel.createdAt.toISOString(),
-    status: taskModel.status,
-    priority: taskModel.priority,
-    deadline: taskModel.deadline ? taskModel.deadline.toISOString() : undefined,
+    id: String(plain.id),
+    title: plain.title,
+    description: plain.description || undefined,
+    createdAt: plain.createdAt as string,
+    status: plain.status,
+    priority: plain.priority,
+    deadline: plain.deadline ? (plain.deadline as string) : undefined,
   };
+};
+
+const parseId = (id: string): number => {
+  const parsed = parseInt(id, 10);
+  if (isNaN(parsed) || parsed <= 0) {
+    throw new Error('Invalid task ID format');
+  }
+  return parsed;
 };
 
 export class TaskService {
@@ -42,7 +51,8 @@ export class TaskService {
   }
 
   async getById(id: string): Promise<Task | null> {
-    const task = await TaskModel.findByPk(parseInt(id, 10));
+    const taskId = parseId(id);
+    const task = await TaskModel.findByPk(taskId);
     if (!task) {
       return null;
     }
@@ -71,7 +81,8 @@ export class TaskService {
   }
 
   async update(id: string, input: UpdateTaskInput): Promise<Task> {
-    const task = await TaskModel.findByPk(parseInt(id, 10));
+    const taskId = parseId(id);
+    const task = await TaskModel.findByPk(taskId);
     
     if (!task) {
       throw new Error('Task not found');
@@ -105,7 +116,8 @@ export class TaskService {
   }
 
   async delete(id: string): Promise<void> {
-    const task = await TaskModel.findByPk(parseInt(id, 10));
+    const taskId = parseId(id);
+    const task = await TaskModel.findByPk(taskId);
     
     if (!task) {
       throw new Error('Task not found');

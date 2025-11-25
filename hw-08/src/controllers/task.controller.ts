@@ -3,6 +3,7 @@ import { TaskService } from '../services/task.service.js';
 import { z } from 'zod';
 import type { CreateTaskInput, UpdateTaskInput, FilterParams } from '../types/task.types.js';
 import { STATUS_VALUES, PRIORITY_VALUES } from '../types/task.types.js';
+import { AppError } from '../utils/AppError.js';
 
 const createTaskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -13,13 +14,7 @@ const createTaskSchema = z.object({
   userId: z.number().int().positive('UserId must be a positive integer'),
 });
 
-const updateTaskSchema = z.object({
-  title: z.string().min(1).optional(),
-  description: z.string().optional(),
-  status: z.enum(STATUS_VALUES as [string, ...string[]]).optional(),
-  priority: z.enum(PRIORITY_VALUES as [string, ...string[]]).optional(),
-  deadline: z.string().optional(),
-});
+const updateTaskSchema = createTaskSchema.omit({ userId }).partial();
 
 const filterParamsSchema = z.object({
   createdAt: z.string().optional(),
@@ -40,11 +35,7 @@ export class TaskController {
       
       const validationResult = filterParamsSchema.safeParse(query);
       if (!validationResult.success) {
-        res.status(400).json({
-          error: 'Invalid query parameters',
-          details: validationResult.error.errors,
-        });
-        return;
+        throw new AppError(400, 'Invalid query parameters', validationResult.error.errors);
       }
 
       const filters: FilterParams = validationResult.data;
@@ -61,12 +52,15 @@ export class TaskController {
       const task = await this.taskService.getById(id);
 
       if (!task) {
-        res.status(404).json({ error: 'Task not found' });
-        return;
+        throw new AppError(404, 'Task not found');
       }
 
       res.json(task);
     } catch (error) {
+      if (error instanceof Error && error.message === 'Invalid task ID format') {
+        next(new AppError(400, error.message));
+        return;
+      }
       next(error);
     }
   };
@@ -76,11 +70,7 @@ export class TaskController {
       const validationResult = createTaskSchema.safeParse(req.body);
       
       if (!validationResult.success) {
-        res.status(400).json({
-          error: 'Invalid request body',
-          details: validationResult.error.errors,
-        });
-        return;
+        throw new AppError(400, 'Invalid request body', validationResult.error.errors);
       }
 
       const input: CreateTaskInput = validationResult.data;
@@ -97,26 +87,21 @@ export class TaskController {
       
       const validationResult = updateTaskSchema.safeParse(req.body);
       if (!validationResult.success) {
-        res.status(400).json({
-          error: 'Invalid request body',
-          details: validationResult.error.errors,
-        });
-        return;
+        throw new AppError(400, 'Invalid request body', validationResult.error.errors);
       }
 
       const input: UpdateTaskInput = validationResult.data;
-      
-      try {
-        const updatedTask = await this.taskService.update(id, input);
-        res.json(updatedTask);
-      } catch (error) {
-        if (error instanceof Error && error.message === 'Task not found') {
-          res.status(404).json({ error: 'Task not found' });
-          return;
-        }
-        throw error;
-      }
+      const updatedTask = await this.taskService.update(id, input);
+      res.json(updatedTask);
     } catch (error) {
+      if (error instanceof Error && error.message === 'Task not found') {
+        next(new AppError(404, 'Task not found'));
+        return;
+      }
+      if (error instanceof Error && error.message === 'Invalid task ID format') {
+        next(new AppError(400, error.message));
+        return;
+      }
       next(error);
     }
   };
@@ -124,18 +109,17 @@ export class TaskController {
   delete = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { id } = req.params;
-      
-      try {
-        await this.taskService.delete(id);
-        res.status(204).send();
-      } catch (error) {
-        if (error instanceof Error && error.message === 'Task not found') {
-          res.status(404).json({ error: 'Task not found' });
-          return;
-        }
-        throw error;
-      }
+      await this.taskService.delete(id);
+      res.status(204).send();
     } catch (error) {
+      if (error instanceof Error && error.message === 'Task not found') {
+        next(new AppError(404, 'Task not found'));
+        return;
+      }
+      if (error instanceof Error && error.message === 'Invalid task ID format') {
+        next(new AppError(400, error.message));
+        return;
+      }
       next(error);
     }
   };

@@ -23,13 +23,7 @@ export interface CreateTaskInput {
   userId: number;
 }
 
-export interface UpdateTaskInput {
-  title?: string;
-  description?: string;
-  status?: Status;
-  priority?: Priority;
-  deadline?: string;
-}
+export type UpdateTaskInput = Partial<Omit<CreateTaskInput, 'userId'>>;
 
 export interface FilterParams {
   createdAt?: string;

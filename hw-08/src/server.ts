@@ -3,6 +3,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import taskRoutes from './routes/task.routes.js';
 import { connectDatabase, syncDatabase } from './config/database.js';
+import { AppError } from './utils/AppError.js';
 import './models/User.model.js';
 import './models/Task.model.js';
 
@@ -15,12 +16,20 @@ app.use(express.json());
 
 app.use('/', taskRoutes);
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction): void => {
+app.use((err: Error | AppError, req: Request, res: Response, next: NextFunction): void => {
   console.error('Error:', err);
-  res.status(500).json({
-    error: 'Internal server error',
-    message: err.message,
-  });
+  
+  if (err instanceof AppError) {
+    res.status(err.statusCode).json({
+      error: err.message,
+      ...(err.details && { details: err.details }),
+    });
+  } else {
+    res.status(500).json({
+      error: 'Internal server error',
+      message: err.message,
+    });
+  }
 });
 
 const startServer = async (): Promise<void> => {
