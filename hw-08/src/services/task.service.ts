@@ -1,6 +1,6 @@
-import type { Task, CreateTaskInput, UpdateTaskInput, FilterParams } from '../types/task.types.js';
+import type { Task, CreateTaskInput, UpdateTaskInput, FilterParams, Status, Priority } from '../types/task.types.js';
 import { Task as TaskModel } from '../models/Task.model.js';
-import { Op } from 'sequelize';
+import { Op, type WhereOptions } from 'sequelize';
 
 const convertToTask = (taskModel: TaskModel): Task => {
   return {
@@ -16,7 +16,7 @@ const convertToTask = (taskModel: TaskModel): Task => {
 
 export class TaskService {
   async getAll(filters?: FilterParams): Promise<Task[]> {
-    const where: any = {};
+    const where: WhereOptions<TaskModel> = {};
 
     if (filters) {
       if (filters.createdAt) {
@@ -50,7 +50,14 @@ export class TaskService {
   }
 
   async create(input: CreateTaskInput): Promise<Task> {
-    const taskData: any = {
+    const taskData: {
+      title: string;
+      description: string | null;
+      status: Status;
+      priority: Priority;
+      deadline: Date | null;
+      userId: number;
+    } = {
       title: input.title,
       description: input.description || null,
       status: input.status || 'todo',
@@ -70,7 +77,13 @@ export class TaskService {
       throw new Error('Task not found');
     }
 
-    const updateData: any = {};
+    const updateData: Partial<{
+      title: string;
+      description: string | null;
+      status: Status;
+      priority: Priority;
+      deadline: Date | null;
+    }> = {};
     if (input.title !== undefined) {
       updateData.title = input.title;
     }

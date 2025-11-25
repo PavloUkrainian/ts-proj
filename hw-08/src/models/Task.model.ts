@@ -2,6 +2,7 @@ import { DataTypes, Model, type Optional } from 'sequelize';
 import { sequelize } from '../config/database.js';
 import { User } from './User.model.js';
 import type { Status, Priority } from '../types/task.types.js';
+import { STATUS_VALUES, PRIORITY_VALUES } from '../types/task.types.js';
 
 interface TaskAttributes {
   id: number;
@@ -47,12 +48,12 @@ Task.init(
       allowNull: true,
     },
     status: {
-      type: DataTypes.ENUM('todo', 'in_progress', 'done'),
+      type: DataTypes.ENUM(...STATUS_VALUES),
       allowNull: false,
       defaultValue: 'todo',
     },
     priority: {
-      type: DataTypes.ENUM('low', 'medium', 'high'),
+      type: DataTypes.ENUM(...PRIORITY_VALUES),
       allowNull: false,
       defaultValue: 'medium',
     },

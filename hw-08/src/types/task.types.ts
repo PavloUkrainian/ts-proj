@@ -1,5 +1,8 @@
-export type Status = 'todo' | 'in_progress' | 'done';
-export type Priority = 'low' | 'medium' | 'high';
+export const STATUS_VALUES = ['todo', 'in_progress', 'done'] as const;
+export const PRIORITY_VALUES = ['low', 'medium', 'high'] as const;
+
+export type Status = typeof STATUS_VALUES[number];
+export type Priority = typeof PRIORITY_VALUES[number];
 
 export interface Task {
   id: string;

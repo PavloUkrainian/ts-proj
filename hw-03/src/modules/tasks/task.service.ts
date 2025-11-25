@@ -101,7 +101,7 @@ export class TaskService {
     const taskType = input.type || 'task';
     const now = new Date().toISOString();
 
-    const taskData: ITaskBase = {
+    const taskData: RawTaskData = {
       id: autoId,
       title: input.title.trim(),
       description: input.description?.trim(),
@@ -110,29 +110,14 @@ export class TaskService {
       priority: input.priority || 'medium',
       deadline: input.deadline || undefined,
       type: taskType,
+      parentId: input.parentId,
+      assignee: input.assignee,
+      storyPoints: input.storyPoints,
+      epicId: input.epicId,
+      features: input.features,
     };
 
-    let newTask: TaskEntity;
-
-    switch (taskType) {
-      case 'subtask':
-        if (!input.parentId) {
-          throw new Error('Subtask requires parentId');
-        }
-        newTask = new Subtask(taskData, input.parentId);
-        break;
-      case 'bug':
-        newTask = new Bug(taskData, input.assignee);
-        break;
-      case 'story':
-        newTask = new Story(taskData, input.storyPoints, input.epicId);
-        break;
-      case 'epic':
-        newTask = new Epic(taskData, input.features);
-        break;
-      default:
-        newTask = new Task(taskData);
-    }
+    const newTask = createTaskInstance(taskData);
 
     this.tasks.push(newTask);
     this.saveTasks();
@@ -159,14 +144,14 @@ export class TaskService {
 
     existingTask.update(updatedData);
 
-    if (input.assignee !== undefined && existingTask.type === 'bug') {
-      (existingTask as Bug).setAssignee(input.assignee);
+    if (input.assignee !== undefined && existingTask instanceof Bug) {
+      existingTask.setAssignee(input.assignee);
     }
-    if (input.storyPoints !== undefined && existingTask.type === 'story') {
-      (existingTask as Story).setStoryPoints(input.storyPoints);
+    if (input.storyPoints !== undefined && existingTask instanceof Story) {
+      existingTask.setStoryPoints(input.storyPoints);
     }
-    if (input.features !== undefined && existingTask.type === 'epic') {
-      (existingTask as Epic).setFeatures(input.features);
+    if (input.features !== undefined && existingTask instanceof Epic) {
+      existingTask.setFeatures(input.features);
     }
 
     this.saveTasks();
