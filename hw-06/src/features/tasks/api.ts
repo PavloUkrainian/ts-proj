@@ -31,7 +31,9 @@ export async function getTaskById(id: string): Promise<Task> {
 /**
  * Створення задачі (POST)
  */
-export async function createTask(task: Omit<Task, 'id' | 'createdAt'>): Promise<Task> {
+export async function createTask(
+  task: Omit<Task, 'id' | 'createdAt'>
+): Promise<Task> {
   const response = await fetch(`${API_BASE_URL}/tasks`, {
     method: 'POST',
     headers: {

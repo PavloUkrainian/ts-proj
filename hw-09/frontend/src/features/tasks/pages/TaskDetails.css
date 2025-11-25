@@ -1,0 +1,148 @@
+.task-details-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.task-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.back-btn,
+.edit-btn,
+.delete-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.back-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.back-btn:hover {
+  background-color: #5a6268;
+}
+
+.edit-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #0056b3;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}
+
+.task-details {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.task-details h1 {
+  margin-bottom: 30px;
+  color: #213547;
+}
+
+.task-section {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.task-section:last-child {
+  border-bottom: none;
+}
+
+.task-section h2 {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: #666;
+  font-weight: 500;
+}
+
+.task-section p {
+  margin: 0;
+  color: #213547;
+  line-height: 1.6;
+}
+
+.status,
+.priority {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.status.status-todo {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status.status-in_progress {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.status.status-review {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.status.status-done {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.priority.priority-high {
+  background-color: #fee;
+  color: #c33;
+}
+
+.priority.priority-medium {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.priority.priority-low {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.error-message {
+  color: #dc3545;
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+}
+

@@ -17,7 +17,9 @@ export function TasksList() {
         const fetchedTasks = await getTasks();
         setTasks(fetchedTasks);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Помилка завантаження завдань');
+        setError(
+          err instanceof Error ? err.message : 'Помилка завантаження завдань'
+        );
       } finally {
         setLoading(false);
       }
@@ -67,11 +69,13 @@ export function TasksList() {
           {tasks.map((task) => {
             const taskId = task.id ? String(task.id) : undefined;
             if (!taskId) return null;
-            
+
             return (
               <Link key={taskId} to={`/tasks/${taskId}`} className="task-card">
                 <h3>{task.title}</h3>
-                {task.description && <p className="task-description">{task.description}</p>}
+                {task.description && (
+                  <p className="task-description">{task.description}</p>
+                )}
                 <div className="task-meta">
                   <span className={`status status-${task.status}`}>
                     {task.status === 'todo' && 'To Do'}
@@ -85,7 +89,10 @@ export function TasksList() {
                   </span>
                 </div>
                 {task.deadline && (
-                  <p className="task-deadline">Дедлайн: {new Date(task.deadline).toLocaleDateString('uk-UA')}</p>
+                  <p className="task-deadline">
+                    Дедлайн:{' '}
+                    {new Date(task.deadline).toLocaleDateString('uk-UA')}
+                  </p>
                 )}
               </Link>
             );
@@ -95,9 +102,5 @@ export function TasksList() {
     );
   };
 
-  return (
-    <div className="tasks-list-container">
-      {renderContent()}
-    </div>
-  );
+  return <div className="tasks-list-container">{renderContent()}</div>;
 }

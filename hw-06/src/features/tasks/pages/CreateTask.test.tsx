@@ -27,11 +27,12 @@ describe('CreateTask', () => {
     mockNavigate.mockClear();
   });
 
-
   it('кнопка Submit має стан disabled, якщо форма порожня', () => {
     renderWithRouter(<CreateTask />);
 
-    const submitButton = screen.getByRole('button', { name: /створити завдання/i });
+    const submitButton = screen.getByRole('button', {
+      name: /створити завдання/i,
+    });
     expect(submitButton).toBeDisabled();
   });
 
@@ -43,7 +44,9 @@ describe('CreateTask', () => {
     await user.type(titleInput, 'Тест');
     await user.clear(titleInput);
 
-    const submitButton = screen.getByRole('button', { name: /створити завдання/i });
+    const submitButton = screen.getByRole('button', {
+      name: /створити завдання/i,
+    });
     await waitFor(() => {
       expect(submitButton).toBeDisabled();
     });
@@ -56,13 +59,15 @@ describe('CreateTask', () => {
     const titleInput = screen.getByLabelText(/назва:/i);
     await user.type(titleInput, 'Тестове завдання');
 
-    const submitButton = screen.getByRole('button', { name: /створити завдання/i });
+    const submitButton = screen.getByRole('button', {
+      name: /створити завдання/i,
+    });
     await waitFor(() => {
       expect(submitButton).not.toBeDisabled();
     });
   });
 
-  it('при помилках валідації з\'являються відповідні error messages', async () => {
+  it("при помилках валідації з'являються відповідні error messages", async () => {
     const user = userEvent.setup();
     renderWithRouter(<CreateTask />);
 
@@ -71,7 +76,9 @@ describe('CreateTask', () => {
     await user.clear(titleInput);
 
     await waitFor(() => {
-      expect(screen.getByText(/назва завдання обов'язкова/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/назва завдання обов'язкова/i)
+      ).toBeInTheDocument();
     });
   });
 
@@ -89,10 +96,14 @@ describe('CreateTask', () => {
     await user.type(deadlineInput, yesterdayString);
 
     await waitFor(() => {
-      expect(screen.getByText(/дедлайн не може бути в минулому/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/дедлайн не може бути в минулому/i)
+      ).toBeInTheDocument();
     });
 
-    const submitButton = screen.getByRole('button', { name: /створити завдання/i });
+    const submitButton = screen.getByRole('button', {
+      name: /створити завдання/i,
+    });
     expect(submitButton).toBeDisabled();
   });
 });

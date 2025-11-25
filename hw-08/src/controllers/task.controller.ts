@@ -1,7 +1,13 @@
 import type { Request, Response, NextFunction } from 'express';
 import { TaskService } from '../services/task.service.js';
 import { z } from 'zod';
-import type { CreateTaskInput, UpdateTaskInput, FilterParams, Status, Priority } from '../types/task.types.js';
+import type {
+  CreateTaskInput,
+  UpdateTaskInput,
+  FilterParams,
+  Status,
+  Priority,
+} from '../types/task.types.js';
 import { STATUS_VALUES, PRIORITY_VALUES } from '../types/task.types.js';
 import { AppError } from '../utils/AppError.js';
 
@@ -29,19 +35,33 @@ export class TaskController {
     this.taskService = new TaskService();
   }
 
-  getAll = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getAll = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const query = req.query;
-      
+
       const validationResult = filterParamsSchema.safeParse(query);
       if (!validationResult.success) {
-        throw new AppError(400, 'Invalid query parameters', validationResult.error.errors);
+        throw new AppError(
+          400,
+          'Invalid query parameters',
+          validationResult.error.errors
+        );
       }
 
       const filters: FilterParams = {
-        ...(validationResult.data.createdAt && { createdAt: validationResult.data.createdAt }),
-        ...(validationResult.data.status && { status: validationResult.data.status as Status }),
-        ...(validationResult.data.priority && { priority: validationResult.data.priority as Priority }),
+        ...(validationResult.data.createdAt && {
+          createdAt: validationResult.data.createdAt,
+        }),
+        ...(validationResult.data.status && {
+          status: validationResult.data.status as Status,
+        }),
+        ...(validationResult.data.priority && {
+          priority: validationResult.data.priority as Priority,
+        }),
       };
       const tasks = await this.taskService.getAll(filters);
       res.json(tasks);
@@ -50,9 +70,20 @@ export class TaskController {
     }
   };
 
-  getById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const { id } = req.params;
+
+      // Validate ID format first - if invalid, return 404
+      const parsedId = parseInt(id, 10);
+      if (isNaN(parsedId) || parsedId <= 0) {
+        throw new AppError(404, 'Task not found');
+      }
+
       const task = await this.taskService.getById(id);
 
       if (!task) {
@@ -61,20 +92,31 @@ export class TaskController {
 
       res.json(task);
     } catch (error) {
-      if (error instanceof Error && error.message === 'Invalid task ID format') {
-        next(new AppError(400, error.message));
+      if (
+        error instanceof Error &&
+        error.message === 'Invalid task ID format'
+      ) {
+        next(new AppError(404, 'Task not found'));
         return;
       }
       next(error);
     }
   };
 
-  create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  create = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const validationResult = createTaskSchema.safeParse(req.body);
-      
+
       if (!validationResult.success) {
-        throw new AppError(400, 'Invalid request body', validationResult.error.errors);
+        throw new AppError(
+          400,
+          'Invalid request body',
+          validationResult.error.errors
+        );
       }
 
       const input: CreateTaskInput = {
@@ -89,13 +131,27 @@ export class TaskController {
     }
   };
 
-  update = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  update = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const { id } = req.params;
-      
+
+      // Validate ID format first - if invalid, return 404
+      const parsedId = parseInt(id, 10);
+      if (isNaN(parsedId) || parsedId <= 0) {
+        throw new AppError(404, 'Task not found');
+      }
+
       const validationResult = updateTaskSchema.safeParse(req.body);
       if (!validationResult.success) {
-        throw new AppError(400, 'Invalid request body', validationResult.error.errors);
+        throw new AppError(
+          400,
+          'Invalid request body',
+          validationResult.error.errors
+        );
       }
 
       const input: UpdateTaskInput = {
@@ -110,17 +166,31 @@ export class TaskController {
         next(new AppError(404, 'Task not found'));
         return;
       }
-      if (error instanceof Error && error.message === 'Invalid task ID format') {
-        next(new AppError(400, error.message));
+      if (
+        error instanceof Error &&
+        error.message === 'Invalid task ID format'
+      ) {
+        next(new AppError(404, 'Task not found'));
         return;
       }
       next(error);
     }
   };
 
-  delete = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  delete = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const { id } = req.params;
+
+      // Validate ID format first - if invalid, return 404
+      const parsedId = parseInt(id, 10);
+      if (isNaN(parsedId) || parsedId <= 0) {
+        throw new AppError(404, 'Task not found');
+      }
+
       await this.taskService.delete(id);
       res.status(204).send();
     } catch (error) {
@@ -128,8 +198,11 @@ export class TaskController {
         next(new AppError(404, 'Task not found'));
         return;
       }
-      if (error instanceof Error && error.message === 'Invalid task ID format') {
-        next(new AppError(400, error.message));
+      if (
+        error instanceof Error &&
+        error.message === 'Invalid task ID format'
+      ) {
+        next(new AppError(404, 'Task not found'));
         return;
       }
       next(error);

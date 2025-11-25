@@ -1,0 +1,1 @@
+{"root":["./src/server.ts","./src/config/database.ts","./src/controllers/task.controller.ts","./src/models/task.model.ts","./src/models/user.model.ts","./src/routes/task.routes.ts","./src/services/task.service.ts","./src/types/task.types.ts","./src/utils/apperror.ts"],"version":"5.9.3"}

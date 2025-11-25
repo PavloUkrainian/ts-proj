@@ -125,4 +125,3 @@ describe('TaskDetails', () => {
     mockUseParams.mockReturnValue({ id: '1' });
   });
 });
-

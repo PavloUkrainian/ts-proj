@@ -25,7 +25,9 @@ export function TaskDetails() {
         const fetchedTask = await getTaskById(id);
         setTask(fetchedTask);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Помилка завантаження завдання');
+        setError(
+          err instanceof Error ? err.message : 'Помилка завантаження завдання'
+        );
       } finally {
         setLoading(false);
       }
@@ -96,9 +98,5 @@ export function TaskDetails() {
     );
   };
 
-  return (
-    <div className="task-details-container">
-      {renderContent()}
-    </div>
-  );
+  return <div className="task-details-container">{renderContent()}</div>;
 }

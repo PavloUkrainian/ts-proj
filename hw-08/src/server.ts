@@ -1,4 +1,8 @@
-import express, { type Request, type Response, type NextFunction } from 'express';
+import express, {
+  type Request,
+  type Response,
+  type NextFunction,
+} from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import taskRoutes from './routes/task.routes.js';
@@ -16,30 +20,37 @@ app.use(express.json());
 
 app.use('/', taskRoutes);
 
-app.use((err: Error | AppError, req: Request, res: Response, next: NextFunction): void => {
-  console.error('Error:', err);
-  
-  if (err instanceof AppError) {
-    const response: Record<string, unknown> = {
-      error: err.message,
-    };
-    if (err.details) {
-      response.details = err.details;
+app.use(
+  (
+    err: Error | AppError,
+    req: Request,
+    res: Response,
+    _next: NextFunction
+  ): void => {
+    console.error('Error:', err);
+
+    if (err instanceof AppError) {
+      const response: Record<string, unknown> = {
+        error: err.message,
+      };
+      if (err.details) {
+        response.details = err.details;
+      }
+      res.status(err.statusCode).json(response);
+    } else {
+      res.status(500).json({
+        error: 'Internal server error',
+        message: err.message,
+      });
     }
-    res.status(err.statusCode).json(response);
-  } else {
-    res.status(500).json({
-      error: 'Internal server error',
-      message: err.message,
-    });
   }
-});
+);
 
 const startServer = async (): Promise<void> => {
   try {
     await connectDatabase();
     await syncDatabase();
-    
+
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });

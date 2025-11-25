@@ -64,7 +64,9 @@ export function CreateTask() {
               className={errors.description ? 'error' : ''}
             />
             {errors.description && (
-              <span className="error-message">{errors.description.message}</span>
+              <span className="error-message">
+                {errors.description.message}
+              </span>
             )}
           </div>
 
