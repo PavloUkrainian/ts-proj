@@ -19,13 +19,7 @@ export interface CreateTaskInput {
   deadline?: string;
 }
 
-export interface UpdateTaskInput {
-  title?: string;
-  description?: string;
-  status?: Status;
-  priority?: Priority;
-  deadline?: string;
-}
+export type UpdateTaskInput = Partial<CreateTaskInput>;
 
 export interface FilterParams {
   createdAt?: string;

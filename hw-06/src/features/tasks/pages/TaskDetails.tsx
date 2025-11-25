@@ -34,63 +34,71 @@ export function TaskDetails() {
     fetchTask();
   }, [id]);
 
-  if (loading) {
-    return <div className="task-details-container">Завантаження...</div>;
-  }
+  const renderContent = () => {
+    if (loading) {
+      return <>Завантаження...</>;
+    }
 
-  if (error || !task) {
+    if (error || !task) {
+      return (
+        <>
+          <div className="error-message">{error || 'Завдання не знайдено'}</div>
+          <button onClick={() => navigate('/tasks')} className="back-btn">
+            Повернутися до списку
+          </button>
+        </>
+      );
+    }
+
     return (
-      <div className="task-details-container">
-        <div className="error-message">{error || 'Завдання не знайдено'}</div>
+      <>
         <button onClick={() => navigate('/tasks')} className="back-btn">
-          Повернутися до списку
+          ← Назад до списку
         </button>
-      </div>
+        <div className="task-details">
+          <h1>{task.title}</h1>
+          {task.description && (
+            <div className="task-section">
+              <h2>Опис</h2>
+              <p>{task.description}</p>
+            </div>
+          )}
+          <div className="task-section">
+            <h2>Статус</h2>
+            <span className={`status status-${task.status}`}>
+              {task.status === 'todo' && 'To Do'}
+              {task.status === 'in_progress' && 'В процесі'}
+              {task.status === 'done' && 'Виконано'}
+            </span>
+          </div>
+          <div className="task-section">
+            <h2>Пріоритет</h2>
+            <span className={`priority priority-${task.priority}`}>
+              {task.priority === 'low' && 'Низький'}
+              {task.priority === 'medium' && 'Середній'}
+              {task.priority === 'high' && 'Високий'}
+            </span>
+          </div>
+          {task.deadline && (
+            <div className="task-section">
+              <h2>Дедлайн</h2>
+              <p>{new Date(task.deadline).toLocaleDateString('uk-UA')}</p>
+            </div>
+          )}
+          {task.createdAt && (
+            <div className="task-section">
+              <h2>Дата створення</h2>
+              <p>{new Date(task.createdAt).toLocaleDateString('uk-UA')}</p>
+            </div>
+          )}
+        </div>
+      </>
     );
-  }
+  };
 
   return (
     <div className="task-details-container">
-      <button onClick={() => navigate('/tasks')} className="back-btn">
-        ← Назад до списку
-      </button>
-      <div className="task-details">
-        <h1>{task.title}</h1>
-        {task.description && (
-          <div className="task-section">
-            <h2>Опис</h2>
-            <p>{task.description}</p>
-          </div>
-        )}
-        <div className="task-section">
-          <h2>Статус</h2>
-          <span className={`status status-${task.status}`}>
-            {task.status === 'todo' && 'To Do'}
-            {task.status === 'in_progress' && 'В процесі'}
-            {task.status === 'done' && 'Виконано'}
-          </span>
-        </div>
-        <div className="task-section">
-          <h2>Пріоритет</h2>
-          <span className={`priority priority-${task.priority}`}>
-            {task.priority === 'low' && 'Низький'}
-            {task.priority === 'medium' && 'Середній'}
-            {task.priority === 'high' && 'Високий'}
-          </span>
-        </div>
-        {task.deadline && (
-          <div className="task-section">
-            <h2>Дедлайн</h2>
-            <p>{new Date(task.deadline).toLocaleDateString('uk-UA')}</p>
-          </div>
-        )}
-        {task.createdAt && (
-          <div className="task-section">
-            <h2>Дата створення</h2>
-            <p>{new Date(task.createdAt).toLocaleDateString('uk-UA')}</p>
-          </div>
-        )}
-      </div>
+      {renderContent()}
     </div>
   );
 }

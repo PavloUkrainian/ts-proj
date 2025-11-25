@@ -1,35 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
 import { createTask } from '../api';
+import { taskSchema, type TaskFormData } from '../schema';
 import './CreateTask.css';
-
-const taskSchema = z.object({
-  title: z.string().min(1, 'Назва завдання обов\'язкова'),
-  description: z.string().optional(),
-  status: z.enum(['todo', 'in_progress', 'done'], {
-    required_error: 'Статус обов\'язковий',
-  }),
-  priority: z.enum(['low', 'medium', 'high'], {
-    required_error: 'Пріоритет обов\'язковий',
-  }),
-  deadline: z.string().optional().refine(
-    (date) => {
-      if (!date) return true;
-      const selectedDate = new Date(date);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      selectedDate.setHours(0, 0, 0, 0);
-      return selectedDate >= today;
-    },
-    {
-      message: 'Дедлайн не може бути в минулому',
-    }
-  ),
-});
-
-type TaskFormData = z.infer<typeof taskSchema>;
 
 export function CreateTask() {
   const navigate = useNavigate();

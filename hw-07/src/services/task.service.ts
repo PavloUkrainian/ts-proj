@@ -1,4 +1,5 @@
 import type { Task, CreateTaskInput, UpdateTaskInput, FilterParams } from '../types/task.types.js';
+import { AppError } from '../utils/AppError.js';
 
 export class TaskService {
   private tasks: Task[] = [];
@@ -50,7 +51,7 @@ export class TaskService {
     const taskIndex = this.tasks.findIndex(task => task.id === id);
     
     if (taskIndex === -1) {
-      throw new Error('Task not found');
+      throw new AppError(404, 'Task not found');
     }
 
     const existingTask = this.tasks[taskIndex];
@@ -71,7 +72,7 @@ export class TaskService {
     const taskIndex = this.tasks.findIndex(task => task.id === id);
     
     if (taskIndex === -1) {
-      throw new Error('Task not found');
+      throw new AppError(404, 'Task not found');
     }
 
     this.tasks.splice(taskIndex, 1);
