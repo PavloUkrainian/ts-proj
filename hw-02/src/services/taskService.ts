@@ -1,4 +1,4 @@
-import type { Task, Priority, Status, RawTask } from '../types';
+import type { Task, Priority, Status, RawTask, FilterParams } from '../types';
 import { validateAndNormalize } from '../utils/taskUtils';
 import { readAllRaw, writeAll } from '../utils/fileUtils';
 
@@ -53,13 +53,6 @@ export function deleteTask(id: string): void {
   if (filtered.length === tasks.length) throw new Error('Task not found');
   writeAll(filtered);
 }
-
-export type FilterParams = {
-  status?: Status;
-  priority?: Priority;
-  createdFrom?: string | Date;
-  createdTo?: string | Date;
-};
 
 export function filterTasks(params: FilterParams): Task[] {
   const tasks = loadAll();

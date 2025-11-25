@@ -13,14 +13,19 @@ type TaskBase = {
   deadline?: string | Date;
 };
 
-export type RawTask = TaskBase & { id?: string };
+export type RawTask = TaskBase & { id: string };
 
 export type Task = Omit<TaskBase, 'status' | 'priority' | 'createdAt'> &
   Required<Pick<TaskBase, 'status' | 'priority'>> & {
     id: string;
     createdAt: string;
-    status: Status;
-    priority: Priority;
     deadline?: string;
   };
+
+export type FilterParams = {
+  status?: Status;
+  priority?: Priority;
+  createdFrom?: string | Date;
+  createdTo?: string | Date;
+};
 
