@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Get the root directory of the project
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+
+# Check if we're in a specific homework directory
+if [ -f "$ROOT_DIR/hw-08/.lintstagedrc.json" ] && git diff --cached --name-only | grep -q "^hw-08/"; then
+  echo "Running lint-staged for hw-08 (backend)..."
+  cd "$ROOT_DIR/hw-08" && npx lint-staged
+  EXIT_CODE=$?
+  cd "$ROOT_DIR"
+  if [ $EXIT_CODE -ne 0 ]; then
+    exit $EXIT_CODE
+  fi
+fi
+
+if [ -f "$ROOT_DIR/hw-06/.lintstagedrc.json" ] && git diff --cached --name-only | grep -q "^hw-06/"; then
+  echo "Running lint-staged for hw-06 (frontend)..."
+  cd "$ROOT_DIR/hw-06" && npx lint-staged
+  EXIT_CODE=$?
+  cd "$ROOT_DIR"
+  if [ $EXIT_CODE -ne 0 ]; then
+    exit $EXIT_CODE
+  fi
+fi
+

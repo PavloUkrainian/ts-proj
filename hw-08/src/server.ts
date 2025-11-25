@@ -20,10 +20,13 @@ app.use((err: Error | AppError, req: Request, res: Response, next: NextFunction)
   console.error('Error:', err);
   
   if (err instanceof AppError) {
-    res.status(err.statusCode).json({
+    const response: Record<string, unknown> = {
       error: err.message,
-      ...(err.details && { details: err.details }),
-    });
+    };
+    if (err.details) {
+      response.details = err.details;
+    }
+    res.status(err.statusCode).json(response);
   } else {
     res.status(500).json({
       error: 'Internal server error',

@@ -8,10 +8,10 @@ const convertToTask = (taskModel: TaskModel): Task => {
     id: String(plain.id),
     title: plain.title,
     description: plain.description || undefined,
-    createdAt: plain.createdAt as string,
+    createdAt: plain.createdAt instanceof Date ? plain.createdAt.toISOString() : String(plain.createdAt),
     status: plain.status,
     priority: plain.priority,
-    deadline: plain.deadline ? (plain.deadline as string) : undefined,
+    deadline: plain.deadline ? (plain.deadline instanceof Date ? plain.deadline.toISOString() : String(plain.deadline)) : undefined,
   };
 };
 

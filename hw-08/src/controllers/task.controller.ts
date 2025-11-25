@@ -1,25 +1,25 @@
 import type { Request, Response, NextFunction } from 'express';
 import { TaskService } from '../services/task.service.js';
 import { z } from 'zod';
-import type { CreateTaskInput, UpdateTaskInput, FilterParams } from '../types/task.types.js';
+import type { CreateTaskInput, UpdateTaskInput, FilterParams, Status, Priority } from '../types/task.types.js';
 import { STATUS_VALUES, PRIORITY_VALUES } from '../types/task.types.js';
 import { AppError } from '../utils/AppError.js';
 
 const createTaskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().optional(),
-  status: z.enum(STATUS_VALUES as [string, ...string[]]).optional(),
-  priority: z.enum(PRIORITY_VALUES as [string, ...string[]]).optional(),
+  status: z.enum([...STATUS_VALUES] as [string, ...string[]]).optional(),
+  priority: z.enum([...PRIORITY_VALUES] as [string, ...string[]]).optional(),
   deadline: z.string().optional(),
   userId: z.number().int().positive('UserId must be a positive integer'),
 });
 
-const updateTaskSchema = createTaskSchema.omit({ userId }).partial();
+const updateTaskSchema = createTaskSchema.omit({ userId: true }).partial();
 
 const filterParamsSchema = z.object({
   createdAt: z.string().optional(),
-  status: z.enum(STATUS_VALUES as [string, ...string[]]).optional(),
-  priority: z.enum(PRIORITY_VALUES as [string, ...string[]]).optional(),
+  status: z.enum([...STATUS_VALUES] as [string, ...string[]]).optional(),
+  priority: z.enum([...PRIORITY_VALUES] as [string, ...string[]]).optional(),
 });
 
 export class TaskController {
@@ -38,7 +38,11 @@ export class TaskController {
         throw new AppError(400, 'Invalid query parameters', validationResult.error.errors);
       }
 
-      const filters: FilterParams = validationResult.data;
+      const filters: FilterParams = {
+        ...(validationResult.data.createdAt && { createdAt: validationResult.data.createdAt }),
+        ...(validationResult.data.status && { status: validationResult.data.status as Status }),
+        ...(validationResult.data.priority && { priority: validationResult.data.priority as Priority }),
+      };
       const tasks = await this.taskService.getAll(filters);
       res.json(tasks);
     } catch (error) {
@@ -73,7 +77,11 @@ export class TaskController {
         throw new AppError(400, 'Invalid request body', validationResult.error.errors);
       }
 
-      const input: CreateTaskInput = validationResult.data;
+      const input: CreateTaskInput = {
+        ...validationResult.data,
+        status: validationResult.data.status as Status | undefined,
+        priority: validationResult.data.priority as Priority | undefined,
+      };
       const newTask = await this.taskService.create(input);
       res.status(201).json(newTask);
     } catch (error) {
@@ -90,7 +98,11 @@ export class TaskController {
         throw new AppError(400, 'Invalid request body', validationResult.error.errors);
       }
 
-      const input: UpdateTaskInput = validationResult.data;
+      const input: UpdateTaskInput = {
+        ...validationResult.data,
+        status: validationResult.data.status as Status | undefined,
+        priority: validationResult.data.priority as Priority | undefined,
+      };
       const updatedTask = await this.taskService.update(id, input);
       res.json(updatedTask);
     } catch (error) {
