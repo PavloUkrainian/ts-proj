@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getTaskById, deleteTask } from '../api';
 import type { Task } from '../types';
+import { useToastContext } from '../../../shared/contexts/ToastContext';
+import { ConfirmDialog, useConfirmDialog } from '../../../shared/components/ConfirmDialog';
 import './TaskDetails.css';
 
 export function TaskDetails() {
@@ -10,6 +12,14 @@ export function TaskDetails() {
   const [task, setTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { showToast } = useToastContext();
+  const {
+    isOpen: isConfirmOpen,
+    message: confirmMessage,
+    showConfirm,
+    handleConfirm,
+    handleCancel,
+  } = useConfirmDialog();
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -36,18 +46,22 @@ export function TaskDetails() {
     fetchTask();
   }, [id]);
 
-  const handleDelete = async () => {
-    if (!id || !confirm('Ви впевнені, що хочете видалити це завдання?')) {
-      return;
-    }
-
-    try {
-      await deleteTask(id);
-      navigate('/tasks');
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (_err) {
-      alert('Не вдалося видалити завдання');
-    }
+  const handleDeleteClick = () => {
+    if (!id) return;
+    showConfirm('Ви впевнені, що хочете видалити це завдання?', async () => {
+      try {
+        await deleteTask(id);
+        showToast('Завдання успішно видалено', 'success');
+        navigate('/tasks');
+      } catch (err) {
+        showToast(
+          err instanceof Error
+            ? err.message
+            : 'Не вдалося видалити завдання',
+          'error'
+        );
+      }
+    });
   };
 
   const renderContent = () => {
@@ -76,7 +90,7 @@ export function TaskDetails() {
             <Link to={`/tasks/${task.id}/edit`} className="edit-btn">
               Редагувати
             </Link>
-            <button onClick={handleDelete} className="delete-btn">
+            <button onClick={handleDeleteClick} className="delete-btn">
               Видалити
             </button>
           </div>
@@ -123,5 +137,16 @@ export function TaskDetails() {
     );
   };
 
-  return <div className="task-details-container">{renderContent()}</div>;
+  return (
+    <>
+      <div className="task-details-container">{renderContent()}</div>
+      {isConfirmOpen && (
+        <ConfirmDialog
+          message={confirmMessage}
+          onConfirm={handleConfirm}
+          onCancel={handleCancel}
+        />
+      )}
+    </>
+  );
 }

@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getTaskById, updateTask } from '../api';
 import { taskSchema, type TaskFormData } from '../schema';
-import { useState } from 'react';
+import { useToastContext } from '../../../shared/contexts/ToastContext';
 import './CreateTask.css';
 
 export function EditTask() {
@@ -12,6 +12,7 @@ export function EditTask() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { showToast } = useToastContext();
 
   const {
     register,
@@ -67,9 +68,15 @@ export function EditTask() {
         priority: data.priority,
         deadline: data.deadline || undefined,
       });
+      showToast('Завдання успішно оновлено', 'success');
       navigate(`/tasks/${id}`);
-    } catch {
-      alert('Не вдалося оновити завдання');
+    } catch (err) {
+      showToast(
+        err instanceof Error
+          ? err.message
+          : 'Не вдалося оновити завдання',
+        'error'
+      );
     }
   };
 
@@ -99,76 +106,94 @@ export function EditTask() {
         <form onSubmit={handleSubmit(onSubmit)} className="task-form">
           <div className="form-group">
             <label htmlFor="title">Назва:</label>
-            <input
-              type="text"
-              id="title"
-              {...register('title')}
-              className={errors.title ? 'error' : ''}
-            />
-            {errors.title && (
-              <span className="error-message">{errors.title.message}</span>
-            )}
+            <div className="input-wrapper">
+              <input
+                type="text"
+                id="title"
+                {...register('title')}
+                className={errors.title ? 'error' : ''}
+              />
+              {errors.title && (
+                <span className="error-icon">
+                  <span className="error-tooltip">{errors.title.message}</span>
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="form-group">
             <label htmlFor="description">Опис:</label>
-            <textarea
-              id="description"
-              {...register('description')}
-              rows={3}
-              className={errors.description ? 'error' : ''}
-            />
-            {errors.description && (
-              <span className="error-message">
-                {errors.description.message}
-              </span>
-            )}
+            <div className="input-wrapper">
+              <textarea
+                id="description"
+                {...register('description')}
+                rows={3}
+                className={errors.description ? 'error' : ''}
+              />
+              {errors.description && (
+                <span className="error-icon">
+                  <span className="error-tooltip">{errors.description.message}</span>
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="form-group">
             <label htmlFor="status">Статус:</label>
-            <select
-              id="status"
-              {...register('status')}
-              className={errors.status ? 'error' : ''}
-            >
-              <option value="todo">To Do</option>
-              <option value="in_progress">In Progress</option>
-              <option value="review">Review</option>
-              <option value="done">Done</option>
-            </select>
-            {errors.status && (
-              <span className="error-message">{errors.status.message}</span>
-            )}
+            <div className="input-wrapper">
+              <select
+                id="status"
+                {...register('status')}
+                className={errors.status ? 'error' : ''}
+              >
+                <option value="todo">To Do</option>
+                <option value="in_progress">In Progress</option>
+                <option value="review">Review</option>
+                <option value="done">Done</option>
+              </select>
+              {errors.status && (
+                <span className="error-icon">
+                  <span className="error-tooltip">{errors.status.message}</span>
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="form-group">
             <label htmlFor="priority">Пріоритет:</label>
-            <select
-              id="priority"
-              {...register('priority')}
-              className={errors.priority ? 'error' : ''}
-            >
-              <option value="low">Низький</option>
-              <option value="medium">Середній</option>
-              <option value="high">Високий</option>
-            </select>
-            {errors.priority && (
-              <span className="error-message">{errors.priority.message}</span>
-            )}
+            <div className="input-wrapper">
+              <select
+                id="priority"
+                {...register('priority')}
+                className={errors.priority ? 'error' : ''}
+              >
+                <option value="low">Низький</option>
+                <option value="medium">Середній</option>
+                <option value="high">Високий</option>
+              </select>
+              {errors.priority && (
+                <span className="error-icon">
+                  <span className="error-tooltip">{errors.priority.message}</span>
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="form-group">
             <label htmlFor="deadline">Дедлайн:</label>
-            <input
-              type="date"
-              id="deadline"
-              {...register('deadline')}
-              className={errors.deadline ? 'error' : ''}
-            />
-            {errors.deadline && (
-              <span className="error-message">{errors.deadline.message}</span>
-            )}
+            <div className="input-wrapper">
+              <input
+                type="date"
+                id="deadline"
+                {...register('deadline')}
+                className={errors.deadline ? 'error' : ''}
+              />
+              {errors.deadline && (
+                <span className="error-icon">
+                  <span className="error-tooltip">{errors.deadline.message}</span>
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="form-actions">

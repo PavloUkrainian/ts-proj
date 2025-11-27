@@ -19,18 +19,26 @@
 .task-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  position: relative;
 }
 
 .form-group label {
   font-weight: 500;
   color: #213547;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .form-group input,
@@ -41,6 +49,7 @@
   border-radius: 4px;
   font-size: 1rem;
   font-family: inherit;
+  flex: 1;
 }
 
 .form-group input:focus,
@@ -57,10 +66,60 @@
   border-color: #dc3545;
 }
 
-.error-message {
+.error-icon {
   color: #dc3545;
-  font-size: 0.875rem;
-  margin-top: 4px;
+  font-size: 1.2rem;
+  cursor: help;
+  flex-shrink: 0;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.error-icon::before {
+  content: '⚠';
+}
+
+.error-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  background-color: #333;
+  color: white;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 1000;
+  max-width: 250px;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+.error-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #333;
+}
+
+.error-icon:hover .error-tooltip {
+  opacity: 1;
+}
+
+.error-icon:hover {
+  opacity: 0.8;
 }
 
 .form-actions {
